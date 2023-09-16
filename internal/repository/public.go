@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	GetBlockSumoPlayer(ctx context.Context, playerId uuid.UUID) (*model.BlockSumoData, error)
+	GetBlockSumoData(ctx context.Context, playerId uuid.UUID) (*model.BlockSumoData, error)
 	SaveBlockSumoPlayer(ctx context.Context, data *model.BlockSumoData) error
 
 	GetTowerDefencePlayer(ctx context.Context, playerId uuid.UUID) (*model.TowerDefenceData, error)

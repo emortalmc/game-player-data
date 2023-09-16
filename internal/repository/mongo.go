@@ -58,7 +58,7 @@ func NewMongoRepository(ctx context.Context, logger *zap.SugaredLogger, wg *sync
 	return repo, nil
 }
 
-func (m *mongoRepository) GetBlockSumoPlayer(ctx context.Context, playerId uuid.UUID) (*model.BlockSumoData, error) {
+func (m *mongoRepository) GetBlockSumoData(ctx context.Context, playerId uuid.UUID) (*model.BlockSumoData, error) {
 	result := m.getData(ctx, playerId, m.blockSumoCollection)
 
 	var data model.BlockSumoData
