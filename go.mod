@@ -4,14 +4,14 @@ go 1.21
 
 require (
 	github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916202652-8975e470ce34
-	github.com/gogo/protobuf v1.3.2
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/segmentio/kafka-go v0.4.39
 	github.com/spf13/viper v1.16.0
 	go.mongodb.org/mongo-driver v1.11.6
 	go.uber.org/zap v1.24.0
-	google.golang.org/grpc v1.55.0
+	google.golang.org/grpc v1.56.3
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
@@ -43,7 +43,6 @@ require (
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
