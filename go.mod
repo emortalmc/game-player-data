@@ -1,6 +1,6 @@
 module game-player-data
 
-go 1.21
+go 1.23
 
 require (
 	github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916202652-8975e470ce34
