@@ -69,6 +69,23 @@ func (m *mongoRepository) GetBlockSumoData(ctx context.Context, playerId uuid.UU
 	return &data, nil
 }
 
+func (m *mongoRepository) GetBlockSumoDataForPlayers(ctx context.Context, playerIds []uuid.UUID) ([]*model.BlockSumoData, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	cursor, err := m.blockSumoCollection.Find(ctx, bson.M{"_id": bson.M{"$in": playerIds}})
+	if err != nil {
+		return nil, err
+	}
+
+	var data []*model.BlockSumoData
+	if err := cursor.All(ctx, &data); err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
 func (m *mongoRepository) SaveBlockSumoPlayer(ctx context.Context, data *model.BlockSumoData) error {
 	return m.saveData(ctx, data.PlayerId, data, m.blockSumoCollection)
 }

@@ -96,7 +96,7 @@ func (c *consumer) handleBlockSumoUpdate(ctx context.Context, pId uuid.UUID, msg
 		player = config.CreateDefaultBlockSumoData(pId)
 	}
 
-	msgData := &pbmodel.BlockSumoPlayerData{}
+	msgData := &pbmodel.V1BlockSumoPlayerData{}
 
 	if err := anypb.UnmarshalTo(msg.Data, msgData, proto.UnmarshalOptions{}); err != nil {
 		return fmt.Errorf("failed to unmarshal data: %w", err)

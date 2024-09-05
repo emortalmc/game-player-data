@@ -57,6 +57,10 @@ github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916193435-6abf652a5c2f h1:Dv
 github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916193435-6abf652a5c2f/go.mod h1:se+tHcK9FWxeadkxLF5uj+SPauEye0X+Iq6cGczXGJY=
 github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916202652-8975e470ce34 h1:q095naqNtgsBaI8o1TgkIo3U1pkSbIEnRW1KqWWu8Ww=
 github.com/emortalmc/proto-specs/gen/go v0.0.0-20230916202652-8975e470ce34/go.mod h1:se+tHcK9FWxeadkxLF5uj+SPauEye0X+Iq6cGczXGJY=
+github.com/emortalmc/proto-specs/gen/go v0.0.0-20240905105043-b1abec6eb8cf h1:IdMv84dOIWFMLeIYifQKxc1EmQybknwtiyTbBDrUnvc=
+github.com/emortalmc/proto-specs/gen/go v0.0.0-20240905105043-b1abec6eb8cf/go.mod h1:se+tHcK9FWxeadkxLF5uj+SPauEye0X+Iq6cGczXGJY=
+github.com/emortalmc/proto-specs/gen/go v0.0.0-20240905105617-8c6a55ee2bae h1:Y9ofcDfHuJbXUjTP/5+jMKOPpIysHhDWibpG0nYhy98=
+github.com/emortalmc/proto-specs/gen/go v0.0.0-20240905105617-8c6a55ee2bae/go.mod h1:se+tHcK9FWxeadkxLF5uj+SPauEye0X+Iq6cGczXGJY=
 github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
 github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=

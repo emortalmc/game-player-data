@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 type gamePlayerDataService struct {
@@ -50,6 +51,41 @@ func (s *gamePlayerDataService) GetGamePlayerData(ctx context.Context, req *pb.G
 	return &pb.GetGamePlayerDataResponse{
 		Data: anyData,
 	}, nil
+}
+
+func (s *gamePlayerDataService) GetMultipleGamePlayerData(ctx context.Context, req *pb.GetMultipleGamePlayerDataRequest) (*pb.GetMultipleGamePlayerDataResponse, error) {
+	pIds := make([]uuid.UUID, len(req.PlayerIds))
+	for i, pIdStr := range req.PlayerIds {
+		pId, err := uuid.Parse(pIdStr)
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, "invalid player id")
+		}
+		pIds[i] = pId
+	}
+
+	data := make(map[string]*anypb.Any, len(pIds))
+
+	switch req.GameMode {
+	case gameplayerdata.GameDataGameMode_BLOCK_SUMO:
+		bsData, err := s.repo.GetBlockSumoDataForPlayers(ctx, pIds)
+		if err != nil {
+			return nil, createDbErr(err)
+		}
+
+		for _, d := range bsData {
+			anypb, err := d.ToAnyProto()
+			if err != nil {
+				return nil, status.Error(codes.Internal, "failed to convert data to proto")
+			}
+
+			data[d.PlayerId.String()] = anypb
+		}
+	}
+
+	return &pb.GetMultipleGamePlayerDataResponse{
+		Data: data,
+	}, nil
+
 }
 
 func createDbErr(err error) error {

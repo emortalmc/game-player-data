@@ -18,13 +18,13 @@ type BlockSumoData struct {
 }
 
 func (d *BlockSumoData) ToAnyProto() (*anypb.Any, error) {
-	return anypb.New(&gameplayerdata.BlockSumoPlayerData{
+	return anypb.New(&gameplayerdata.V1BlockSumoPlayerData{
 		BlockSlot:  d.BlockSlot,
 		ShearsSlot: d.ShearsSlot,
 	})
 }
 
-func (d *BlockSumoData) FromProto(pId uuid.UUID, data *gameplayerdata.BlockSumoPlayerData) {
+func (d *BlockSumoData) FromProto(pId uuid.UUID, data *gameplayerdata.V1BlockSumoPlayerData) {
 	d.PlayerId = pId
 	d.BlockSlot = data.BlockSlot
 	d.ShearsSlot = data.ShearsSlot
@@ -36,8 +36,8 @@ type MinesweeperData struct {
 }
 
 // TODO
-func (d *MinesweeperData) ToProto() *gameplayerdata.MinesweeperPlayerData {
-	return &gameplayerdata.MinesweeperPlayerData{}
+func (d *MinesweeperData) ToProto() *gameplayerdata.V1MinesweeperPlayerData {
+	return &gameplayerdata.V1MinesweeperPlayerData{}
 }
 
 // TowerDefenceData TODO
@@ -46,6 +46,6 @@ type TowerDefenceData struct {
 }
 
 // TODO
-func (d *TowerDefenceData) ToProto() *gameplayerdata.TowerDefencePlayerData {
-	return &gameplayerdata.TowerDefencePlayerData{}
+func (d *TowerDefenceData) ToProto() *gameplayerdata.V1TowerDefencePlayerData {
+	return &gameplayerdata.V1TowerDefencePlayerData{}
 }

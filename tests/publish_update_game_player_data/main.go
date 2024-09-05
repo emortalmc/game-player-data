@@ -22,7 +22,7 @@ func main() {
 		Async:     false,
 	}
 
-	data := &pbmodel.BlockSumoPlayerData{
+	data := &pbmodel.V1BlockSumoPlayerData{
 		BlockSlot:  12,
 		ShearsSlot: 13,
 	}
