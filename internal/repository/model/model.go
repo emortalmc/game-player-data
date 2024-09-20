@@ -8,10 +8,19 @@ import (
 
 type GameData interface {
 	ToAnyProto() (*anypb.Any, error)
+	PlayerID() uuid.UUID
+}
+
+type BaseGameData struct {
+	PlayerId uuid.UUID `bson:"_id"`
+}
+
+func (d *BaseGameData) PlayerID() uuid.UUID {
+	return d.PlayerId
 }
 
 type BlockSumoData struct {
-	PlayerId uuid.UUID `bson:"_id"`
+	BaseGameData `bson:",inline"`
 
 	BlockSlot  uint32 `bson:"blockSlot"`
 	ShearsSlot uint32 `bson:"shearsSlot"`
@@ -30,9 +39,23 @@ func (d *BlockSumoData) FromProto(pId uuid.UUID, data *gameplayerdata.V1BlockSum
 	d.ShearsSlot = data.ShearsSlot
 }
 
+type MarathonData struct {
+	BaseGameData `bson:",inline"`
+
+	Time         string
+	BlockPalette string
+}
+
+func (d *MarathonData) ToAnyProto() (*anypb.Any, error) {
+	return anypb.New(&gameplayerdata.V1MarathonData{
+		Time:         d.Time,
+		BlockPalette: d.BlockPalette,
+	})
+}
+
 // MinesweeperData TODO
 type MinesweeperData struct {
-	PlayerId uuid.UUID `bson:"_id"`
+	BaseGameData `bson:",inline"`
 }
 
 // TODO

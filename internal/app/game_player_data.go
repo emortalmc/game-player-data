@@ -20,22 +20,16 @@ func Run(cfg *config.Config, logger *zap.SugaredLogger) {
 	repoCtx, repoCancel := context.WithCancel(ctx)
 	repoWg := &sync.WaitGroup{}
 
-	repo, err := repository.NewMongoRepository(repoCtx, logger, repoWg, cfg.MongoDB)
+	mongoDB, err := repository.CreateDatabase(repoCtx, cfg.MongoDB, repoWg, logger)
 	if err != nil {
-		logger.Fatalw("failed to create repository", err)
+		logger.Fatalw("failed to create database", err)
 	}
 
-	//if err := repo.SaveBlockSumoPlayer(ctx, &model.BlockSumoData{
-	//	PlayerId:   uuid.MustParse("8d36737e-1c0a-4a71-87de-9906f577845e"),
-	//	BlockSlot:  1,
-	//	ShearsSlot: 2,
-	//}); err != nil {
-	//	panic(err)
-	//}
+	repoColl := repository.NewGamePlayerDataRepoColl(mongoDB)
 
-	kafka.NewConsumer(ctx, wg, cfg.Kafka, logger, repo)
+	kafka.NewConsumer(ctx, wg, cfg.Kafka, logger, repoColl)
 
-	service.RunServices(ctx, logger, wg, cfg, repo)
+	service.RunServices(ctx, logger, wg, cfg, repoColl)
 
 	wg.Wait()
 	logger.Info("shutting down")

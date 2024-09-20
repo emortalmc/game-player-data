@@ -4,16 +4,24 @@ import (
 	"context"
 	"game-player-data/internal/repository/model"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Repository interface {
-	GetBlockSumoData(ctx context.Context, playerId uuid.UUID) (*model.BlockSumoData, error)
-	GetBlockSumoDataForPlayers(ctx context.Context, playerIds []uuid.UUID) ([]*model.BlockSumoData, error)
-	SaveBlockSumoPlayer(ctx context.Context, data *model.BlockSumoData) error
+type GameDataRepository[T model.GameData] interface {
+	Get(ctx context.Context, playerID uuid.UUID) (T, error)
+	GetOrDefault(ctx context.Context, playerID uuid.UUID, defaultData T) (T, error)
+	GetMultiple(ctx context.Context, playerIds []uuid.UUID) ([]T, error)
+	Save(ctx context.Context, data T) error
+}
 
-	GetTowerDefencePlayer(ctx context.Context, playerId uuid.UUID) (*model.TowerDefenceData, error)
-	SaveTowerDefencePlayer(ctx context.Context, data *model.TowerDefenceData) error
+type GameDataRepoColl struct {
+	BlockSumo GameDataRepository[*model.BlockSumoData]
+	Marathon  GameDataRepository[*model.MarathonData]
+}
 
-	GetMinesweeperPlayer(ctx context.Context, playerId uuid.UUID) (*model.MinesweeperData, error)
-	SaveMinesweeperPlayer(ctx context.Context, data *model.MinesweeperData) error
+func NewGamePlayerDataRepoColl(db *mongo.Database) *GameDataRepoColl {
+	return &GameDataRepoColl{
+		BlockSumo: NewMongoGameDataRepository(db, &model.BlockSumoData{}),
+		Marathon:  NewMongoGameDataRepository(db, &model.MarathonData{}),
+	}
 }

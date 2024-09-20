@@ -17,7 +17,7 @@ import (
 )
 
 func RunServices(ctx context.Context, logger *zap.SugaredLogger, wg *sync.WaitGroup, cfg *config.Config,
-	repo repository.Repository) {
+	repos *repository.GameDataRepoColl) {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
 	if err != nil {
@@ -38,7 +38,7 @@ func RunServices(ctx context.Context, logger *zap.SugaredLogger, wg *sync.WaitGr
 		reflection.Register(s)
 	}
 
-	gameplayerdata.RegisterGamePlayerDataServiceServer(s, newGamePlayerDataService(repo))
+	gameplayerdata.RegisterGamePlayerDataServiceServer(s, newGamePlayerDataService(repos, logger))
 	logger.Infow("listening for gRPC requests", "port", cfg.Port)
 
 	go func() {

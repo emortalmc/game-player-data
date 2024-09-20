@@ -9,6 +9,7 @@ import (
 	"github.com/emortalmc/proto-specs/gen/go/model/gameplayerdata"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -17,12 +18,14 @@ import (
 type gamePlayerDataService struct {
 	pb.UnimplementedGamePlayerDataServiceServer
 
-	repo repository.Repository
+	repos *repository.GameDataRepoColl
+	log   *zap.SugaredLogger
 }
 
-func newGamePlayerDataService(repo repository.Repository) pb.GamePlayerDataServiceServer {
+func newGamePlayerDataService(repos *repository.GameDataRepoColl, log *zap.SugaredLogger) pb.GamePlayerDataServiceServer {
 	return &gamePlayerDataService{
-		repo: repo,
+		repos: repos,
+		log:   log,
 	}
 }
 
@@ -33,14 +36,17 @@ func (s *gamePlayerDataService) GetGamePlayerData(ctx context.Context, req *pb.G
 	}
 
 	var data model.GameData
-
 	switch req.GameMode {
 	case gameplayerdata.GameDataGameMode_BLOCK_SUMO:
-		data, err = s.repo.GetBlockSumoData(ctx, pId)
+		data, err = s.repos.BlockSumo.Get(ctx, pId)
+	case gameplayerdata.GameDataGameMode_MARATHON:
+		data, err = s.repos.Marathon.Get(ctx, pId)
+	default:
+		return nil, status.Error(codes.InvalidArgument, "unsupported game mode")
 	}
 
 	if err != nil {
-		return nil, createDbErr(err)
+		return nil, s.createDbErr(err)
 	}
 
 	anyData, err := data.ToAnyProto()
@@ -63,23 +69,38 @@ func (s *gamePlayerDataService) GetMultipleGamePlayerData(ctx context.Context, r
 		pIds[i] = pId
 	}
 
-	data := make(map[string]*anypb.Any, len(pIds))
+	var genericData = make([]model.GameData, 0)
 
 	switch req.GameMode {
 	case gameplayerdata.GameDataGameMode_BLOCK_SUMO:
-		bsData, err := s.repo.GetBlockSumoDataForPlayers(ctx, pIds)
+		uncastData, err := s.repos.BlockSumo.GetMultiple(ctx, pIds)
 		if err != nil {
-			return nil, createDbErr(err)
+			return nil, s.createDbErr(err)
 		}
 
-		for _, d := range bsData {
-			anypb, err := d.ToAnyProto()
-			if err != nil {
-				return nil, status.Error(codes.Internal, "failed to convert data to proto")
-			}
-
-			data[d.PlayerId.String()] = anypb
+		for _, d := range uncastData {
+			genericData = append(genericData, d)
 		}
+	case gameplayerdata.GameDataGameMode_MARATHON:
+		uncastData, err := s.repos.Marathon.GetMultiple(ctx, pIds)
+		if err != nil {
+			return nil, s.createDbErr(err)
+		}
+
+		for _, d := range uncastData {
+			genericData = append(genericData, d)
+		}
+	}
+
+	data := make(map[string]*anypb.Any, len(genericData))
+
+	for _, d := range genericData {
+		anypb, err := d.ToAnyProto()
+		if err != nil {
+			return nil, status.Error(codes.Internal, "failed to convert data to proto")
+		}
+
+		data[d.PlayerID().String()] = anypb
 	}
 
 	return &pb.GetMultipleGamePlayerDataResponse{
@@ -88,10 +109,11 @@ func (s *gamePlayerDataService) GetMultipleGamePlayerData(ctx context.Context, r
 
 }
 
-func createDbErr(err error) error {
+func (s *gamePlayerDataService) createDbErr(err error) error {
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return status.Error(codes.NotFound, "player not found")
 	} else {
+		s.log.Errorw("failed to get player data", "error", err)
 		return status.Error(codes.Internal, "failed to get player data")
 	}
 }
