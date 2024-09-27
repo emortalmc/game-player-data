@@ -1,6 +1,7 @@
 package model
 
 import (
+	"game-player-data/internal/utils"
 	"github.com/emortalmc/proto-specs/gen/go/model/gameplayerdata"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -33,24 +34,25 @@ func (d *BlockSumoData) ToAnyProto() (*anypb.Any, error) {
 	})
 }
 
-func (d *BlockSumoData) FromProto(pId uuid.UUID, data *gameplayerdata.V1BlockSumoPlayerData) {
-	d.PlayerId = pId
-	d.BlockSlot = data.BlockSlot
-	d.ShearsSlot = data.ShearsSlot
-}
-
 type MarathonData struct {
 	BaseGameData `bson:",inline"`
 
 	Time         string
 	BlockPalette string
+	Animation    string `bson:",omitempty"`
 }
 
 func (d *MarathonData) ToAnyProto() (*anypb.Any, error) {
-	return anypb.New(&gameplayerdata.V1MarathonData{
+	pb := &gameplayerdata.V1MarathonData{
 		Time:         d.Time,
 		BlockPalette: d.BlockPalette,
-	})
+	}
+
+	if d.Animation != "" {
+		pb.Animation = utils.PointerOf(d.Animation)
+	}
+
+	return anypb.New(pb)
 }
 
 // MinesweeperData TODO

@@ -108,11 +108,14 @@ func (c *consumer) handleMarathonUpdate(ctx context.Context, pId uuid.UUID, msg 
 			gameData.BlockPalette = msgData.BlockPalette
 		case "time":
 			gameData.Time = msgData.Time
+		case "animation":
+			gameData.Animation = *msgData.Animation
 		}
 	}
 
 	return c.repos.Marathon.Save(ctx, gameData)
 }
+
 func (c *consumer) handleBlockSumoUpdate(ctx context.Context, pId uuid.UUID, msg *pbmsg.UpdateGamePlayerDataMessage) error {
 	gameData, err := c.repos.BlockSumo.GetOrDefault(ctx, pId, &model.BlockSumoData{BaseGameData: model.BaseGameData{PlayerId: pId}})
 	if err != nil {

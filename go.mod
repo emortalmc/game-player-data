@@ -3,7 +3,7 @@ module game-player-data
 go 1.23
 
 require (
-	github.com/emortalmc/proto-specs/gen/go v0.0.0-20240920201852-8d931ec7a9aa
+	github.com/emortalmc/proto-specs/gen/go v0.0.0-20240927103241-2584fd28e0f9
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/segmentio/kafka-go v0.4.39
